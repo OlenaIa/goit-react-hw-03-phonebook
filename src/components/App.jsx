@@ -6,6 +6,7 @@ import { Filter } from "./Filter/Filter";
 import { Container } from "./App.styled";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
+const LS_KEY = 'my_contacts';
 
 export class App extends Component {
   state = {
@@ -18,6 +19,20 @@ export class App extends Component {
     filter: '',
   }
 
+  componentDidMount = () => {
+    const startState = JSON.parse(localStorage.getItem(LS_KEY));
+    if (startState) {
+      this.setState({ contacts: [...startState] });
+    };
+  }
+
+  componentDidUpdate = (_, prevState) => {
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts))
+      console.log('update contacts');
+    };
+  }
+  
   onSubmitForm = data => {
     const newObj = { ...data, id: nanoid() };
     this.setState(({ contacts }) => {
